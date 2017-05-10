@@ -12,7 +12,8 @@
     "dev:sw": "echo \"TK\"",
     "dev:server": "export DEV=true && rollup -w -c server/rollup.config.js",
     "start": "node server/dist",
-    "deploy": "now && now alias"
+    "deploy": "now && now alias",
+    "deploy:ci": "now --token $NOW_TOKEN && now alias --token $NOW_TOKEN"
   },
   "repository": {
     "type": "git",
