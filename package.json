@@ -1,0 +1,47 @@
+{
+  "name": "butternut.now.sh",
+  "version": "1.0.0",
+  "description": "Demo site for Butternut",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run bundle:client && npm run bundle:sw && npm run bundle:server",
+    "bundle:client": "rollup -c client/rollup.config.js",
+    "bundle:sw": "echo \"TK\"",
+    "bundle:server": "rollup -c server/rollup.config.js",
+    "dev:client": "export DEV=true && rollup -w -c client/rollup.config.js",
+    "dev:sw": "echo \"TK\"",
+    "dev:server": "export DEV=true && rollup -w -c server/rollup.config.js",
+    "start": "node server/dist",
+    "deploy": "now && now alias"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rich-Harris/butternut.now.sh.git"
+  },
+  "author": "Rich Harris",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Rich-Harris/butternut.now.sh/issues"
+  },
+  "homepage": "https://github.com/Rich-Harris/butternut.now.sh#readme",
+  "dependencies": {
+    "butternut": "^0.3.2",
+    "compression": "^1.6.2",
+    "express": "^4.15.2"
+  },
+  "now": {
+    "alias": "butternut.now.sh",
+    "files": [
+      "public",
+      "client",
+      "server",
+      "service-worker",
+      "shared"
+    ]
+  },
+  "devDependencies": {
+    "now": "^5.2.3",
+    "rollup": "^0.41.6",
+    "rollup-plugin-svelte": "^1.8.1"
+  }
+}

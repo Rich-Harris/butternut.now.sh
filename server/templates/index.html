@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang='__lang__'>
+<head>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width'>
+
+	<link rel='manifest' href='/manifest.json'>
+	<link rel='icon' type='image/png' href='/favicon.png'>
+	<meta name='theme-color' content='#333'>
+
+	<link rel='stylesheet' href='/main.css'>
+
+	<title>__title__</title>
+
+	<style>
+		html, body {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			padding: 4.5em 0.5em 0.5em 0.5em;
+		}
+
+		header {
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 4em;
+		}
+
+		main {
+			position: relative;
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+
+	<script>
+		if ( 'serviceWorker' in navigator ) {
+			window.addEventListener( 'load', function () {
+				navigator.serviceWorker.register( '/service-worker.js' )
+					.then( function ( registration ) {
+						console.log( 'ServiceWorker registration successful' );
+					})
+					.catch( function ( err ) {
+						console.error( err.stack );
+					});
+			});
+		}
+	</script>
+</head>
+<body>
+	<header>incomplete demo site. coming soon...</header>
+	<main>__route__</main>
+
+	<script src='/curl.js'></script>
+	<script src='/bundle.js'></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+.DS_Store
+node_modules
+client/dist
+server/dist
+service-worker/dist
