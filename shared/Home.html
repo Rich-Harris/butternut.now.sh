@@ -28,16 +28,26 @@
 </style>
 
 <script>
+	import { getSourceFromGist, saveSourceAsGist } from './utils/gist.js';
+
+	const versionMatch = typeof window !== 'undefined' ? /version=([^&]+)/.exec( window.location.search ) : null;
+	const version = versionMatch ? versionMatch[1] : 'latest';
+
 	export default {
 		data () {
-			return {
-				source: ''
-			};
+			const gistMatch = typeof window !== 'undefined' ? /gist=(.+)/.exec( window.location.search ) : null;
+			const gist = gistMatch ? gistMatch[1] : null;
+
+			return { source: '', gist };
 		},
 
 		oncreate () {
-			curl([ '/butternut.umd.js' ]).then( butternut => {
+			const url = version === 'local' ? `/butternut.umd.js` : `https://unpkg.com/butternut@${version}/dist/butternut.umd.js`;
+
+			curl([ url ]).then( butternut => {
 				window.butternut = butternut;
+
+				this.updateUrl();
 
 				this.observe( 'source', source => {
 					try {
@@ -49,6 +59,39 @@
 					}
 				});
 			});
+
+			const gist = this.get( 'gist' );
+			if ( gist ) {
+				getSourceFromGist( gist ).then( source => {
+					this.set({ source });
+				});
+			}
+
+			window.addEventListener( 'keydown', event => {
+				if ( event.which === 83 && event.metaKey ) {
+					event.preventDefault();
+					this.save();
+				}
+			});
+		},
+
+		methods: {
+			updateUrl () {
+				const urlVersion = version === 'local' ? version : window.butternut.VERSION;
+				const gist = this.get( 'gist' );
+
+				let url = `/?version=${urlVersion}`;
+				if ( gist ) url += `&gist=${gist}`;
+
+				history.replaceState({}, 'x', url);
+			},
+
+			save () {
+				saveSourceAsGist( this.get( 'source' ) ).then( gist => {
+					this.set({ gist });
+					this.updateUrl();
+				});
+			}
 		}
 	};
 </script>

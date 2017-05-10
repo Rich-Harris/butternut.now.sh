@@ -6,3 +6,5 @@ target.innerHTML = ''; // TODO hydration
 const app = new Home({
 	target
 });
+
+window.app = app;
