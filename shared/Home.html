@@ -111,6 +111,11 @@
 		oncreate () {
 			const worker = new Worker('/worker.js');
 
+			worker.postMessage({
+				type: 'init',
+				search: window.location.search
+			});
+
 			worker.addEventListener('message', event => {
 				switch (event.data.type) {
 					case 'init':
