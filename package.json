@@ -39,6 +39,7 @@
       "client",
       "server",
       "service-worker",
+      "worker",
       "shared"
     ]
   },
