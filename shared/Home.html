@@ -1,44 +1,111 @@
 <div class='left'>
-	<textarea bind:value='source'></textarea>
+	<div class='controls'>
+		<button
+			class='save {{saving ? "saving" : ""}}'
+			disabled='{{saving}}'
+			on:click='save()'
+		>{{saving ? 'saving...' : `save (${metaKey}+S)`}}</button>
+	</div>
+	<textarea placeholder='// type or paste in some JavaScript source code' bind:value='source'></textarea>
 </div>
 
 <div class='right'>
-	<textarea ref:output></textarea>
+	<div class='controls'>
+		{{#if squashed}}
+			<p>{{prettyBytes(source.length)}} → {{prettyBytes(squashed.length)}}
+			(saved {{(100 * compression).toFixed(1)}}%)</p>
+		{{/if}}
+	</div>
+	<textarea readonly ref:output></textarea>
 </div>
 
 <style>
 	.left, .right {
 		position: relative;
-		width: 50%;
+		width: calc(50% - 0.25em);
 		height: 100%;
 		float: left;
+		padding: 2.5em 0 0 0;
+	}
+
+	.left {
+		margin: 0 0.5em 0 0;
+	}
+
+	.controls {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 2em;
+		line-height: 1;
+	}
+
+	.controls p {
+		line-height: 1;
+		margin: 1em 0;
 	}
 
 	textarea {
-		position: absolute;
+		position: relative;
 		width: 100%;
 		height: 100%;
 		outline: none;
 		box-sizing: border-box;
 		padding: 0.5em;
 		font-size: inherit;
-		font-family: monospace;
+		font-family: Inconsolata, monospace;
 		resize: none;
+		color: inherit;
+		border: 1px solid #333;
+		border-radius: 2px;
+	}
+
+	button {
+		font-family: inherit;
+		font-size: inherit;
+		line-height: 1;
+		padding: 0.5em;
+		background-color: white;
+		border: 1px solid #333;
+		border-radius: 2px;
+	}
+
+	.save {
+		width: 8em;
+	}
+
+	.saving {
+		background-color: #333;
+		color: white;
 	}
 </style>
 
 <script>
+	import prettyBytes from 'pretty-bytes';
 	import { getSourceFromGist, saveSourceAsGist } from './utils/gist.js';
-
-	const versionMatch = typeof window !== 'undefined' ? /version=([^&]+)/.exec( window.location.search ) : null;
-	const version = versionMatch ? versionMatch[1] : 'latest';
 
 	export default {
 		data () {
 			const gistMatch = typeof window !== 'undefined' ? /gist=(.+)/.exec( window.location.search ) : null;
 			const gist = gistMatch ? gistMatch[1] : null;
 
-			return { source: '', gist };
+			return {
+				source: '',
+				squashed: '',
+				gist,
+				metaKey: typeof navigator !== 'undefined' && navigator.platform === 'MacIntel' ? '⌘' : 'Ctrl'
+			};
+		},
+
+		computed: {
+			compression ( source, squashed ) {
+				return ( source.length - squashed.length ) / source.length;
+			}
+		},
+
+		helpers: {
+			prettyBytes
 		},
 
 		oncreate () {
@@ -53,7 +120,7 @@
 
 					case 'result':
 						// TODO https://github.com/sveltejs/svelte/issues/582
-						this.refs.output.value = event.data.squashed;
+						this.set({ squashed: event.data.squashed });
 						break;
 
 					case 'error':
@@ -62,7 +129,13 @@
 				}
 			});
 
+			// TODO remove this https://github.com/sveltejs/svelte/issues/582
+			this.observe( 'squashed', squashed => {
+				this.refs.output.value = squashed;
+			});
+
 			this.observe( 'source', source => {
+				console.log( 'posting', source );
 				worker.postMessage({
 					type: 'source',
 					source
@@ -95,10 +168,19 @@
 			},
 
 			save () {
-				saveSourceAsGist( this.get( 'source' ) ).then( gist => {
-					this.set({ gist });
-					this.updateUrl();
-				});
+				this.set({ saving: true });
+
+				saveSourceAsGist( this.get( 'source' ) )
+					.then( gist => {
+						this.set({ gist });
+						this.updateUrl();
+					})
+					.catch( err => {
+						alert( `Error saving to gist.github.com — please try again!` );
+					})
+					.then( () => {
+						this.set({ saving: false });
+					});
 			}
 		}
 	};

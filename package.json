@@ -30,7 +30,8 @@
   "dependencies": {
     "butternut": "^0.3.3",
     "compression": "^1.6.2",
-    "express": "^4.15.2"
+    "express": "^4.15.2",
+    "pretty-bytes": "^4.0.2"
   },
   "now": {
     "alias": "butternut.now.sh",
@@ -46,6 +47,8 @@
   "devDependencies": {
     "now": "^5.2.3",
     "rollup": "^0.41.6",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-svelte": "^1.8.1"
   }
 }

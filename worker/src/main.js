@@ -18,6 +18,8 @@ xhr.onload = () => {
 	fn.call(global);
 	butternut = global.butternut;
 
+	console.log('ready');
+
 	self.postMessage({
 		type: 'init',
 		version: version === 'local' ? version : global.butternut.VERSION
@@ -39,7 +41,11 @@ xhr.send();
 self.addEventListener('message', event => {
 	switch (event.data.type) {
 		case 'source':
-			if (butternut) squash(event.data.source);
+			if (butternut) {
+				squash(event.data.source);
+			} else {
+				pendingSource = event.data.source;
+			}
 			break;
 	}
 });
