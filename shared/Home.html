@@ -42,21 +42,30 @@
 		},
 
 		oncreate () {
-			const url = version === 'local' ? `/butternut.umd.js` : `https://unpkg.com/butternut@${version}/dist/butternut.umd.js`;
+			const worker = new Worker('/worker.js');
 
-			curl([ url ]).then( butternut => {
-				window.butternut = butternut;
+			worker.addEventListener('message', event => {
+				switch (event.data.type) {
+					case 'init':
+						this.set({ version: event.data.version });
+						this.updateUrl();
+						break;
 
-				this.updateUrl();
+					case 'result':
+						// TODO https://github.com/sveltejs/svelte/issues/582
+						this.refs.output.value = event.data.squashed;
+						break;
 
-				this.observe( 'source', source => {
-					try {
-						const squashed = butternut.squash( source ).code;
-						console.log( squashed );
-						this.refs.output.value = squashed;
-					} catch ( err ) {
-						console.error( err.stack );
-					}
+					case 'error':
+						console.error(event.data.message);
+						break;
+				}
+			});
+
+			this.observe( 'source', source => {
+				worker.postMessage({
+					type: 'source',
+					source
 				});
 			});
 
@@ -77,10 +86,9 @@
 
 		methods: {
 			updateUrl () {
-				const urlVersion = version === 'local' ? version : window.butternut.VERSION;
-				const gist = this.get( 'gist' );
+				const { version, gist } = this.get();
 
-				let url = `/?version=${urlVersion}`;
+				let url = `/?version=${version}`;
 				if ( gist ) url += `&gist=${gist}`;
 
 				history.replaceState({}, 'x', url);

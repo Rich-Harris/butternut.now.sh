@@ -20,6 +20,10 @@ app.use( express.static( 'client/dist', {
 	maxAge: dev ? '1s' : '1y'
 }));
 
+app.use( express.static( 'worker/dist', {
+	maxAge: dev ? '1s' : '1y'
+}));
+
 app.use( express.static( 'public', {
 	maxAge: 1000 * 60 * 60 * 24 // one day
 }));
