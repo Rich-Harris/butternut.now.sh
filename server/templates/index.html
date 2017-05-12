@@ -59,20 +59,18 @@
 
 		body {
 			padding: 5em 0.5em 0.5em 0.5em;
-			background-color: rgba(200,140,20,0.1)
+			background-color: rgba(254,210,16,0.1)
 		}
 
 		header {
 			position: absolute;
 			top: 0;
-			left: 0.5em;
-			width: calc(100% - 1em);
+			left: 0;
+			width: 100%;
 			height: 3.7em;
-			padding: 0.5em 0;
-			border-bottom: 1px solid rgba(200,150,125,0.4);
-			/*padding: 0 0 0 5em;
-			background: url(/logo.svg) no-repeat 0.5em 50%;
-			background-size: auto calc(100% - 1em);*/
+			padding: 1.4em 0.7em 0.5em 3.2em;
+			background: url(/butternut.svg) no-repeat 0.8em 0.5em;
+			background-size: auto calc(100% - 0.4em);
 		}
 
 		h1 {
@@ -82,19 +80,28 @@
 			font-size: 2rem;
 			display: inline-block;
 			line-height: 1;
+			color: #fbae18;
 		}
 
 		small {
 			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 			font-weight: 300;
-			font-size: 1.4rem;
+			font-size: 1rem;
 			margin-left: 0.2em;
+			color: #333;
+			display: none;
+		}
+
+		@media (min-width: 400px) {
+			small {
+				display: inline;
+			}
 		}
 
 		header a {
 			float: right;
-			line-height: 2.8rem;
-			font-size: 1.4rem;
+			line-height: 3rem;
+			font-size: 1rem;
 			text-decoration: none;
 			font-weight: 300;
 			color: #333;
@@ -107,6 +114,17 @@
 		main {
 			width: 100%;
 			height: 100%;
+		}
+
+		@media (min-width: 480px) {
+			small {
+				font-size: 1.4rem;
+			}
+
+			header a {
+				font-size: 1.4rem;
+				line-height: 2.8rem;
+			}
 		}
 	</style>
 
@@ -123,6 +141,12 @@
 			});
 		}
 	</script>
+
+	<meta name='twitter:card' content='summary_large_image'>
+	<meta name='twitter:creator' content='@Rich_Harris'>
+	<meta name='twitter:title' content='Butternut'>
+	<meta name='twitter:description' content='The fast JavaScript minifier'>
+	<meta name='twitter:image' content='https://butternow.now.sh/twitter-card.jpg'>
 </head>
 <body>
 	<header>
